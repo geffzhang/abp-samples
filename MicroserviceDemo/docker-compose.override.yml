@@ -1,49 +1,7 @@
-version: '3.0'
+version: '3.7'
+
 services:
-  sqlserver:
-    environment:
-      - SA_PASSWORD=yourStrong(!)Password
-      - ACCEPT_EULA=Y
-    ports:
-      - "1433"
-
-  mongodb:
-    ports:
-      - "27017"
-
-  rabbitmq:
-    ports:
-      - "15672"
-      - "5672"
-
-  redis:
-    ports:
-      - "6379"
-
-  elasticsearch:
-    volumes:
-      - ./elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-    environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - "9200"
-
-  logstash:
-    volumes:
-      - ./elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./elk/logstash/pipeline:/usr/share/logstash/pipeline:ro
-    environment:
-      - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
-    ports:
-      - "9600"
-      - "5000"
-
-  kibana:
-    volumes:
-      - ./elk/kibana/config/:/usr/share/kibana/config:ro
-    ports:
-      - 51510:5601
-
+  
   internal-gateway:
     environment:
       - ElasticSearch__Url=http://elasticsearch:9200
@@ -58,6 +16,8 @@ services:
       - ReRoutes__1__DownstreamHostAndPorts__0__Port=80
       - ReRoutes__2__DownstreamHostAndPorts__0__Host=blogging-service
       - ReRoutes__2__DownstreamHostAndPorts__0__Port=80
+      - ReRoutes__3__DownstreamHostAndPorts__0__Host=tenant-management-service
+      - ReRoutes__3__DownstreamHostAndPorts__0__Port=80
       - GlobalConfiguration__BaseUrl=http://internal-gateway
     ports:
       - "80"
@@ -134,6 +94,18 @@ services:
     ports:
       - 51523:80
 
+  tenant-management-service:
+    environment:
+      - ElasticSearch__Url=http://elasticsearch:9200
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - AuthServer__Authority=http://auth-server:51511
+      - ConnectionStrings__Default=Server=sqlserver;Database=MsDemo_Identity;Trusted_Connection=True;MultipleActiveResultSets=true;User=sa;Password=yourStrong(!)Password;Integrated Security=false      
+      - Redis__Configuration=redis
+      - RabbitMQ__Connections__Default__HostName=rabbitmq
+    ports:
+      - 51524:80
+  
   auth-server:
     environment:
       - ElasticSearch__Url=http://elasticsearch:9200

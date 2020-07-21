@@ -1,7 +1,7 @@
 import { RestService , PagedAndSortedResultRequestDto, PagedResultDto} from '@abp/ng.core';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import {BookDto, CreateUpdateBookDto} from '../models';
+import {CreateUpdateBookDto, BookDto} from '../models';
 
 @Injectable({providedIn: 'root'})
 export class BookService {
@@ -9,12 +9,6 @@ export class BookService {
 
   constructor(private restService: RestService) {}
 
- getById(id: string): Observable<BookDto> {
-   return this.restService.request({ url: `/api/app/book/${id}`, method: 'GET' },{ apiName: this.apiName });
- }
- getListByInput(params = {} as PagedAndSortedResultRequestDto): Observable<PagedResultDto<BookDto>> {
-   return this.restService.request({ url: '/api/app/book', method: 'GET', params },{ apiName: this.apiName });
- }
  createByInput(body: CreateUpdateBookDto): Observable<BookDto> {
    return this.restService.request({ url: '/api/app/book', method: 'POST', body },{ apiName: this.apiName });
  }
@@ -23,5 +17,11 @@ export class BookService {
  }
  deleteById(id: string): Observable<void> {
    return this.restService.request({ url: `/api/app/book/${id}`, method: 'DELETE' },{ apiName: this.apiName });
+ }
+ getById(id: string): Observable<BookDto> {
+   return this.restService.request({ url: `/api/app/book/${id}`, method: 'GET' },{ apiName: this.apiName });
+ }
+ getListByInput(params = {} as PagedAndSortedResultRequestDto): Observable<PagedResultDto<BookDto>> {
+   return this.restService.request({ url: '/api/app/book', method: 'GET', params },{ apiName: this.apiName });
  }
 }

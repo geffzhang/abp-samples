@@ -1,26 +1,21 @@
-version: '3.0'
+version: '3.7'
 
 services:
   sqlserver:
-    environment:
-      - SA_PASSWORD=yourStrong(!)Password
-      - ACCEPT_EULA=Y
-    ports:
-      - "1433"
 
-  # migrations:
-  #   image: 'volosoft/microservice-demo-migrations:${TAG:-latest}'
-  #   build:
-  #     context: ../..
-  #     dockerfile: samples/MicroserviceDemo/databases/Dockerfile
-  #   depends_on:
-  #     - sqlserver
+#  migrations:
+#     image: 'volosoft/microservice-demo-migrations:${TAG:-latest}'
+#     build:
+#       context: .
+#       dockerfile: databases/Dockerfile
+#     depends_on:
+#       - sqlserver
 
   restore-database:
     image: 'volosoft/microservice-demo-restore-database:${TAG:-latest}'
     build:
-      context: ../..
-      dockerfile: samples/MicroserviceDemo/databases/restore/Dockerfile
+      context: .
+      dockerfile: databases/restore/Dockerfile
     volumes:
       - dbdata:/var/opt/mssql
     environment:

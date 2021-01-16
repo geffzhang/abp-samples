@@ -36,6 +36,7 @@ using Volo.Blogging;
 using Volo.Blogging.Blogs;
 using Volo.Blogging.Files;
 using Volo.Blogging.MongoDB;
+using Volo.Abp.Uow;
 
 namespace BloggingService.Host
 {
@@ -106,6 +107,11 @@ namespace BloggingService.Host
             {
                 options.IsEnabledForGetRequests = true;
                 options.ApplicationName = "BloggingService";
+            });
+
+            Configure<AbpUnitOfWorkDefaultOptions>(options =>
+            {
+                options.TransactionBehavior = UnitOfWorkTransactionBehavior.Disabled;
             });
 
             var redis = ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]);

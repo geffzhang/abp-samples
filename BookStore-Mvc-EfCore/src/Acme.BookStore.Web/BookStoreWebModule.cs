@@ -83,7 +83,7 @@ namespace Acme.BookStore.Web
             ConfigureNavigationServices();
             ConfigureAutoApiControllers();
             ConfigureSwaggerServices(context.Services);
-            
+
             Configure<RazorPagesOptions>(options =>
             {
                 options.Conventions.AuthorizePage("/Books/Index", BookStorePermissions.Books.Default);
@@ -103,11 +103,11 @@ namespace Acme.BookStore.Web
         private void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration)
         {
             context.Services.AddAuthentication()
-                .AddIdentityServerAuthentication(options =>
+                .AddJwtBearer(options =>
                 {
                     options.Authority = configuration["AuthServer:Authority"];
-                    options.RequireHttpsMetadata = false;
-                    options.ApiName = "BookStore";
+                    options.RequireHttpsMetadata = Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
+                    options.Audience = "BookStore";
                 });
         }
 
@@ -116,7 +116,6 @@ namespace Acme.BookStore.Web
             Configure<AbpAutoMapperOptions>(options =>
             {
                 options.AddMaps<BookStoreWebModule>();
-
             });
         }
 

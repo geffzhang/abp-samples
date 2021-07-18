@@ -33,6 +33,11 @@ $solutionPaths = (
     "../SignalRDemo",
     "../SignalRTieredDemo",
     "../StoredProcedureDemo",
-    "../TextTemplateDemo",
-    "../AbpLdapSample"
+    "../TextTemplateDemo/Razor",
+    "../TextTemplateDemo/Scriban",
+    "../AbpLdapSample",
+    "../ExcelIO",
+    "../EmailSendDemo",
+	"../IdentityServerReferenceToken/aspnet-core",
+	"../SignInWithoutSpecifyingTenant"
 )

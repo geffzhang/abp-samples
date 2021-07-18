@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Acme.BookStore.Authors;
 using Acme.BookStore.Permissions;
@@ -39,10 +40,11 @@ namespace Acme.BookStore.Books
 
         public override async Task<BookDto> GetAsync(Guid id)
         {
-            await CheckGetPolicyAsync();
+            //Get the IQueryable<Book> from the repository
+            var queryable = await Repository.GetQueryableAsync();
 
             //Prepare a query to join books and authors
-            var query = from book in Repository
+            var query = from book in queryable
                 join author in _authorRepository on book.AuthorId equals author.Id
                 where book.Id == id
                 select new { book, author };
@@ -62,15 +64,17 @@ namespace Acme.BookStore.Books
         public override async Task<PagedResultDto<BookDto>> GetListAsync(
             PagedAndSortedResultRequestDto input)
         {
-            await CheckGetListPolicyAsync();
+            //Get the IQueryable<Book> from the repository
+            var queryable = await Repository.GetQueryableAsync();
 
             //Prepare a query to join books and authors
-            var query = from book in Repository
+            var query = from book in queryable
                 join author in _authorRepository on book.AuthorId equals author.Id
-                orderby input.Sorting
                 select new {book, author};
 
+            //Paging
             query = query
+                .OrderBy(NormalizeSorting(input.Sorting))
                 .Skip(input.SkipCount)
                 .Take(input.MaxResultCount);
 
@@ -101,6 +105,21 @@ namespace Acme.BookStore.Books
             return new ListResultDto<AuthorLookupDto>(
                 ObjectMapper.Map<List<Author>, List<AuthorLookupDto>>(authors)
             );
+        }
+        
+        private static string NormalizeSorting(string sorting)
+        {
+            if (sorting.IsNullOrEmpty())
+            {
+                return $"book.{nameof(Book.Name)}";
+            }
+
+            if (sorting.Contains("authorName", StringComparison.OrdinalIgnoreCase))
+            {
+                return sorting.Replace("authorName", "author.Name", StringComparison.OrdinalIgnoreCase);
+            }
+
+            return $"book.{sorting}";
         }
     }
 }

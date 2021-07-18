@@ -44,7 +44,7 @@ namespace Acme.BookStore.Web
     [DependsOn(
         typeof(BookStoreHttpApiModule),
         typeof(BookStoreApplicationModule),
-        typeof(BookStoreEntityFrameworkCoreDbMigrationsModule),
+        typeof(BookStoreEntityFrameworkCoreModule),
         typeof(AbpAutofacModule),
         typeof(AbpIdentityWebModule),
         typeof(AbpAccountWebIdentityServerModule),
@@ -198,7 +198,7 @@ namespace Acme.BookStore.Web
             }
 
             app.UseCorrelationId();
-            app.UseVirtualFiles();
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthentication();
             app.UseJwtTokenMiddleware();

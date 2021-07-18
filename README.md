@@ -6,9 +6,8 @@ Sample solutions built with the ABP Framework.
 
 ### Issues
 
-* Please create issues to the main repository: https://github.com/abpframework/abp
+Please create issues to the main repository: https://github.com/abpframework/abp
 
 ### Pull Requests
 
-* You can send PRs to this repository.
-* When you create a new project, please update the [`common.ps1`](build/common.ps1) file.
+You can send PRs to this repository.

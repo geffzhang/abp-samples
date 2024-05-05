@@ -1,21 +1,13 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using BasicAspNetCoreApplication;
 
-namespace BasicAspNetCoreApplication
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+var builder = WebApplication.CreateBuilder(args);
 
-        internal static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                })
-                .UseAutofac();
-    }
-}
+builder.Host.UseAutofac();
+
+await builder.AddApplicationAsync<AppModule>();
+
+var app = builder.Build();
+
+await app.InitializeApplicationAsync();
+
+await app.RunAsync();

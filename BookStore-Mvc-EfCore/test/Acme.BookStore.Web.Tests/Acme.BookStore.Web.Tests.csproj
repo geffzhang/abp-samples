@@ -3,21 +3,23 @@
   <Import Project="..\..\common.props" />
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
     <RootNamespace>Acme.BookStore</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
     <ProjectReference Include="..\Acme.BookStore.Application.Tests\Acme.BookStore.Application.Tests.csproj" />
     <ProjectReference Include="..\..\src\Acme.BookStore.Web\Acme.BookStore.Web.csproj" />
-    <PackageReference Include="Volo.Abp.AspNetCore.TestBase" Version="4.4.0-rc.2" />
+    <PackageReference Include="Volo.Abp.AspNetCore.TestBase" Version="8.0.0" />
+    <ProjectReference Include="..\Acme.BookStore.EntityFrameworkCore.Tests\Acme.BookStore.EntityFrameworkCore.Tests.csproj" />
   </ItemGroup>
 
   <ItemGroup>

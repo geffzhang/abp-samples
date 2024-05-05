@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
+#nullable disable
+
 namespace Acme.BookStore.BookManagement.Migrations
 {
     [DbContext(typeof(UnifiedDbContext))]
@@ -16,15 +18,83 @@ namespace Acme.BookStore.BookManagement.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseIdentityColumns()
                 .HasAnnotation("_Abp_DatabaseProvider", EfCoreDatabaseProvider.SqlServer)
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.0");
+                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Acme.BookStore.BookManagement.Authors.Author", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("ExtraProperties")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("ShortBio")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("BmAuthors", (string)null);
+                });
 
             modelBuilder.Entity("Acme.BookStore.BookManagement.Books.Book", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -69,7 +139,9 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BmBooks");
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("BmBooks", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
@@ -120,9 +192,7 @@ namespace Acme.BookStore.BookManagement.Migrations
                         .HasColumnName("CorrelationId");
 
                     b.Property<string>("Exceptions")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)")
-                        .HasColumnName("Exceptions");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ExecutionDuration")
                         .HasColumnType("int")
@@ -179,7 +249,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("TenantId", "UserId", "ExecutionTime");
 
-                    b.ToTable("AbpAuditLogs");
+                    b.ToTable("AbpAuditLogs", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
@@ -229,7 +299,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("TenantId", "ServiceName", "MethodName", "ExecutionTime");
 
-                    b.ToTable("AbpAuditLogActions");
+                    b.ToTable("AbpAuditLogActions", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.EntityChange", b =>
@@ -279,7 +349,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("TenantId", "EntityTypeFullName", "EntityId");
 
-                    b.ToTable("AbpEntityChanges");
+                    b.ToTable("AbpEntityChanges", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.EntityPropertyChange", b =>
@@ -321,7 +391,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("EntityChangeId");
 
-                    b.ToTable("AbpEntityPropertyChanges");
+                    b.ToTable("AbpEntityPropertyChanges", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityClaimType", b =>
@@ -368,7 +438,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AbpClaimTypes");
+                    b.ToTable("AbpClaimTypes", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityLinkUser", b =>
@@ -395,7 +465,7 @@ namespace Acme.BookStore.BookManagement.Migrations
                         .IsUnique()
                         .HasFilter("[SourceTenantId] IS NOT NULL AND [TargetTenantId] IS NOT NULL");
 
-                    b.ToTable("AbpLinkUsers");
+                    b.ToTable("AbpLinkUsers", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityRole", b =>
@@ -444,7 +514,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("NormalizedName");
 
-                    b.ToTable("AbpRoles");
+                    b.ToTable("AbpRoles", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityRoleClaim", b =>
@@ -472,7 +542,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AbpRoleClaims");
+                    b.ToTable("AbpRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentitySecurityLog", b =>
@@ -547,7 +617,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("TenantId", "UserId");
 
-                    b.ToTable("AbpSecurityLogs");
+                    b.ToTable("AbpSecurityLogs", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUser", b =>
@@ -599,6 +669,9 @@ namespace Acme.BookStore.BookManagement.Migrations
                     b.Property<string>("ExtraProperties")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -699,7 +772,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("UserName");
 
-                    b.ToTable("AbpUsers");
+                    b.ToTable("AbpUsers", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserClaim", b =>
@@ -727,7 +800,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AbpUserClaims");
+                    b.ToTable("AbpUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserLogin", b =>
@@ -756,7 +829,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("LoginProvider", "ProviderKey");
 
-                    b.ToTable("AbpUserLogins");
+                    b.ToTable("AbpUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserOrganizationUnit", b =>
@@ -783,7 +856,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("UserId", "OrganizationUnitId");
 
-                    b.ToTable("AbpUserOrganizationUnits");
+                    b.ToTable("AbpUserOrganizationUnits", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserRole", b =>
@@ -802,7 +875,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("RoleId", "UserId");
 
-                    b.ToTable("AbpUserRoles");
+                    b.ToTable("AbpUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserToken", b =>
@@ -827,7 +900,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AbpUserTokens");
+                    b.ToTable("AbpUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.OrganizationUnit", b =>
@@ -901,7 +974,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("AbpOrganizationUnits");
+                    b.ToTable("AbpOrganizationUnits", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.OrganizationUnitRole", b =>
@@ -928,7 +1001,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("RoleId", "OrganizationUnitId");
 
-                    b.ToTable("AbpOrganizationUnitRoles");
+                    b.ToTable("AbpOrganizationUnitRoles", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.PermissionManagement.PermissionGrant", b =>
@@ -958,9 +1031,11 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name", "ProviderName", "ProviderKey");
+                    b.HasIndex("TenantId", "Name", "ProviderName", "ProviderKey")
+                        .IsUnique()
+                        .HasFilter("[TenantId] IS NOT NULL");
 
-                    b.ToTable("AbpPermissionGrants");
+                    b.ToTable("AbpPermissionGrants", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.SettingManagement.Setting", b =>
@@ -989,9 +1064,11 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name", "ProviderName", "ProviderKey");
+                    b.HasIndex("Name", "ProviderName", "ProviderKey")
+                        .IsUnique()
+                        .HasFilter("[ProviderName] IS NOT NULL AND [ProviderKey] IS NOT NULL");
 
-                    b.ToTable("AbpSettings");
+                    b.ToTable("AbpSettings", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.TenantManagement.Tenant", b =>
@@ -1049,7 +1126,7 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("AbpTenants");
+                    b.ToTable("AbpTenants", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.TenantManagement.TenantConnectionString", b =>
@@ -1068,7 +1145,16 @@ namespace Acme.BookStore.BookManagement.Migrations
 
                     b.HasKey("TenantId", "Name");
 
-                    b.ToTable("AbpTenantConnectionStrings");
+                    b.ToTable("AbpTenantConnectionStrings", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.BookStore.BookManagement.Books.Book", b =>
+                {
+                    b.HasOne("Acme.BookStore.BookManagement.Authors.Author", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>

@@ -1,4 +1,4 @@
-﻿$(function () {
+$(function () {
     var l = abp.localization.getResource('BookStore');
     var createModal = new abp.ModalManager(abp.appPath + 'Books/CreateModal');
     var editModal = new abp.ModalManager(abp.appPath + 'Books/EditModal');
@@ -19,14 +19,14 @@
                             [
                                 {
                                     text: l('Edit'),
-                                    visible: abp.auth.isGranted('BookStore.Books.Edit'),
+                                    visible: abp.auth.isGranted('BookStore.Books.Edit'), //CHECK for the PERMISSION
                                     action: function (data) {
                                         editModal.open({ id: data.record.id });
                                     }
                                 },
                                 {
                                     text: l('Delete'),
-                                    visible: abp.auth.isGranted('BookStore.Books.Delete'),
+                                    visible: abp.auth.isGranted('BookStore.Books.Delete'), //CHECK for the PERMISSION
                                     confirmMessage: function (data) {
                                         return l(
                                             'BookDeletionConfirmationMessage',
@@ -59,34 +59,21 @@
                     title: l('Type'),
                     data: "type",
                     render: function (data) {
-                        return l('Enum:BookType:' + data);
+                        return l('Enum:BookType.' + data);
                     }
                 },
                 {
                     title: l('PublishDate'),
                     data: "publishDate",
-                    render: function (data) {
-                        return luxon
-                            .DateTime
-                            .fromISO(data, {
-                                locale: abp.localization.currentCulture.name
-                            }).toLocaleString();
-                    }
+                    dataFormat: "datetime"
                 },
                 {
                     title: l('Price'),
                     data: "price"
                 },
                 {
-                    title: l('CreationTime'),
-                    data: "creationTime",
-                    render: function (data) {
-                        return luxon
-                            .DateTime
-                            .fromISO(data, {
-                                locale: abp.localization.currentCulture.name
-                            }).toLocaleString(luxon.DateTime.DATETIME_SHORT);
-                    }
+                    title: l('CreationTime'), data: "creationTime",
+                    dataFormat: "datetime"
                 }
             ]
         })

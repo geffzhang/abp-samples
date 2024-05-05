@@ -1,4 +1,4 @@
-﻿$(function () {
+$(function () {
     var l = abp.localization.getResource('BookStore');
     var createModal = new abp.ModalManager(abp.appPath + 'Authors/CreateModal');
     var editModal = new abp.ModalManager(abp.appPath + 'Authors/EditModal');
@@ -19,14 +19,16 @@
                             [
                                 {
                                     text: l('Edit'),
-                                    visible: abp.auth.isGranted('BookStore.Authors.Edit'),
+                                    visible:
+                                        abp.auth.isGranted('BookStore.Authors.Edit'),
                                     action: function (data) {
                                         editModal.open({ id: data.record.id });
                                     }
                                 },
                                 {
                                     text: l('Delete'),
-                                    visible: abp.auth.isGranted('BookStore.Authors.Delete'),
+                                    visible:
+                                        abp.auth.isGranted('BookStore.Authors.Delete'),
                                     confirmMessage: function (data) {
                                         return l(
                                             'AuthorDeletionConfirmationMessage',

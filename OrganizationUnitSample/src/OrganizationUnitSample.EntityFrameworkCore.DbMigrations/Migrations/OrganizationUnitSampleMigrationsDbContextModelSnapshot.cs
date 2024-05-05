@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OrganizationUnitSample.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 
+#nullable disable
+
 namespace OrganizationUnitSample.Migrations
 {
     [DbContext(typeof(OrganizationUnitSampleMigrationsDbContext))]
@@ -16,10 +18,11 @@ namespace OrganizationUnitSample.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseIdentityColumns()
                 .HasAnnotation("_Abp_DatabaseProvider", EfCoreDatabaseProvider.SqlServer)
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.0");
+                .HasAnnotation("ProductVersion", "7.0.1")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("OrganizationUnitSample.Products.Product", b =>
                 {
@@ -69,7 +72,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AppProducts");
+                    b.ToTable("AppProducts", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
@@ -120,9 +123,7 @@ namespace OrganizationUnitSample.Migrations
                         .HasColumnName("CorrelationId");
 
                     b.Property<string>("Exceptions")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)")
-                        .HasColumnName("Exceptions");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ExecutionDuration")
                         .HasColumnType("int")
@@ -148,16 +149,28 @@ namespace OrganizationUnitSample.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ImpersonatorTenantId");
 
+                    b.Property<string>("ImpersonatorTenantName")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("ImpersonatorTenantName");
+
                     b.Property<Guid?>("ImpersonatorUserId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ImpersonatorUserId");
+
+                    b.Property<string>("ImpersonatorUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)")
+                        .HasColumnName("ImpersonatorUserName");
 
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("TenantId");
 
                     b.Property<string>("TenantName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("TenantName");
 
                     b.Property<string>("Url")
                         .HasMaxLength(256)
@@ -179,7 +192,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("TenantId", "UserId", "ExecutionTime");
 
-                    b.ToTable("AbpAuditLogs");
+                    b.ToTable("AbpAuditLogs", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
@@ -229,7 +242,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("TenantId", "ServiceName", "MethodName", "ExecutionTime");
 
-                    b.ToTable("AbpAuditLogActions");
+                    b.ToTable("AbpAuditLogActions", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.EntityChange", b =>
@@ -279,7 +292,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("TenantId", "EntityTypeFullName", "EntityId");
 
-                    b.ToTable("AbpEntityChanges");
+                    b.ToTable("AbpEntityChanges", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.EntityPropertyChange", b =>
@@ -321,7 +334,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("EntityChangeId");
 
-                    b.ToTable("AbpEntityPropertyChanges");
+                    b.ToTable("AbpEntityPropertyChanges", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.BackgroundJobs.BackgroundJobRecord", b =>
@@ -379,7 +392,96 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("IsAbandoned", "NextTryTime");
 
-                    b.ToTable("AbpBackgroundJobs");
+                    b.ToTable("AbpBackgroundJobs", (string)null);
+                });
+
+            modelBuilder.Entity("Volo.Abp.FeatureManagement.FeatureDefinitionRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AllowedProviders")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("DefaultValue")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ExtraProperties")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("GroupName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<bool>("IsAvailableToHost")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVisibleToClients")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ParentName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ValueType")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupName");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("AbpFeatures", (string)null);
+                });
+
+            modelBuilder.Entity("Volo.Abp.FeatureManagement.FeatureGroupDefinitionRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ExtraProperties")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("AbpFeatureGroups", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.FeatureManagement.FeatureValue", b =>
@@ -408,9 +510,11 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name", "ProviderName", "ProviderKey");
+                    b.HasIndex("Name", "ProviderName", "ProviderKey")
+                        .IsUnique()
+                        .HasFilter("[ProviderName] IS NOT NULL AND [ProviderKey] IS NOT NULL");
 
-                    b.ToTable("AbpFeatureValues");
+                    b.ToTable("AbpFeatureValues", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityClaimType", b =>
@@ -457,7 +561,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AbpClaimTypes");
+                    b.ToTable("AbpClaimTypes", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityLinkUser", b =>
@@ -484,7 +588,7 @@ namespace OrganizationUnitSample.Migrations
                         .IsUnique()
                         .HasFilter("[SourceTenantId] IS NOT NULL AND [TargetTenantId] IS NOT NULL");
 
-                    b.ToTable("AbpLinkUsers");
+                    b.ToTable("AbpLinkUsers", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityRole", b =>
@@ -498,6 +602,9 @@ namespace OrganizationUnitSample.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)")
                         .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<int>("EntityVersion")
+                        .HasColumnType("int");
 
                     b.Property<string>("ExtraProperties")
                         .HasColumnType("nvarchar(max)")
@@ -533,7 +640,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("NormalizedName");
 
-                    b.ToTable("AbpRoles");
+                    b.ToTable("AbpRoles", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityRoleClaim", b =>
@@ -561,7 +668,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AbpRoleClaims");
+                    b.ToTable("AbpRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentitySecurityLog", b =>
@@ -636,7 +743,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("TenantId", "UserId");
 
-                    b.ToTable("AbpSecurityLogs");
+                    b.ToTable("AbpSecurityLogs", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUser", b =>
@@ -685,9 +792,16 @@ namespace OrganizationUnitSample.Migrations
                         .HasDefaultValue(false)
                         .HasColumnName("EmailConfirmed");
 
+                    b.Property<int>("EntityVersion")
+                        .HasColumnType("int");
+
                     b.Property<string>("ExtraProperties")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsActive");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -708,6 +822,9 @@ namespace OrganizationUnitSample.Migrations
                     b.Property<Guid?>("LastModifierId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LastModifierId");
+
+                    b.Property<DateTimeOffset?>("LastPasswordChangeTime")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<bool>("LockoutEnabled")
                         .ValueGeneratedOnAdd()
@@ -757,6 +874,9 @@ namespace OrganizationUnitSample.Migrations
                         .HasColumnType("nvarchar(256)")
                         .HasColumnName("SecurityStamp");
 
+                    b.Property<bool>("ShouldChangePasswordOnNextLogin")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Surname")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)")
@@ -788,7 +908,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("UserName");
 
-                    b.ToTable("AbpUsers");
+                    b.ToTable("AbpUsers", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserClaim", b =>
@@ -816,7 +936,34 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AbpUserClaims");
+                    b.ToTable("AbpUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Volo.Abp.Identity.IdentityUserDelegation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("SourceUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TargetUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AbpUserDelegations", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserLogin", b =>
@@ -845,7 +992,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("LoginProvider", "ProviderKey");
 
-                    b.ToTable("AbpUserLogins");
+                    b.ToTable("AbpUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserOrganizationUnit", b =>
@@ -872,7 +1019,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("UserId", "OrganizationUnitId");
 
-                    b.ToTable("AbpUserOrganizationUnits");
+                    b.ToTable("AbpUserOrganizationUnits", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserRole", b =>
@@ -891,7 +1038,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("RoleId", "UserId");
 
-                    b.ToTable("AbpUserRoles");
+                    b.ToTable("AbpUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserToken", b =>
@@ -916,7 +1063,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AbpUserTokens");
+                    b.ToTable("AbpUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.OrganizationUnit", b =>
@@ -959,6 +1106,9 @@ namespace OrganizationUnitSample.Migrations
                         .HasColumnType("nvarchar(128)")
                         .HasColumnName("DisplayName");
 
+                    b.Property<int>("EntityVersion")
+                        .HasColumnType("int");
+
                     b.Property<string>("ExtraProperties")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
@@ -990,7 +1140,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("AbpOrganizationUnits");
+                    b.ToTable("AbpOrganizationUnits", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.OrganizationUnitRole", b =>
@@ -1017,7 +1167,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("RoleId", "OrganizationUnitId");
 
-                    b.ToTable("AbpOrganizationUnitRoles");
+                    b.ToTable("AbpOrganizationUnitRoles", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.ApiResources.ApiResource", b =>
@@ -1091,7 +1241,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IdentityServerApiResources");
+                    b.ToTable("IdentityServerApiResources", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.ApiResources.ApiResourceClaim", b =>
@@ -1105,7 +1255,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ApiResourceId", "Type");
 
-                    b.ToTable("IdentityServerApiResourceClaims");
+                    b.ToTable("IdentityServerApiResourceClaims", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.ApiResources.ApiResourceProperty", b =>
@@ -1123,7 +1273,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ApiResourceId", "Key", "Value");
 
-                    b.ToTable("IdentityServerApiResourceProperties");
+                    b.ToTable("IdentityServerApiResourceProperties", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.ApiResources.ApiResourceScope", b =>
@@ -1137,7 +1287,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ApiResourceId", "Scope");
 
-                    b.ToTable("IdentityServerApiResourceScopes");
+                    b.ToTable("IdentityServerApiResourceScopes", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.ApiResources.ApiResourceSecret", b =>
@@ -1162,7 +1312,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ApiResourceId", "Type", "Value");
 
-                    b.ToTable("IdentityServerApiResourceSecrets");
+                    b.ToTable("IdentityServerApiResourceSecrets", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.ApiScopes.ApiScope", b =>
@@ -1238,7 +1388,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IdentityServerApiScopes");
+                    b.ToTable("IdentityServerApiScopes", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.ApiScopes.ApiScopeClaim", b =>
@@ -1252,7 +1402,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ApiScopeId", "Type");
 
-                    b.ToTable("IdentityServerApiScopeClaims");
+                    b.ToTable("IdentityServerApiScopeClaims", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.ApiScopes.ApiScopeProperty", b =>
@@ -1270,7 +1420,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ApiScopeId", "Key", "Value");
 
-                    b.ToTable("IdentityServerApiScopeProperties");
+                    b.ToTable("IdentityServerApiScopeProperties", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Clients.Client", b =>
@@ -1454,7 +1604,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("IdentityServerClients");
+                    b.ToTable("IdentityServerClients", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Clients.ClientClaim", b =>
@@ -1472,7 +1622,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ClientId", "Type", "Value");
 
-                    b.ToTable("IdentityServerClientClaims");
+                    b.ToTable("IdentityServerClientClaims", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Clients.ClientCorsOrigin", b =>
@@ -1486,7 +1636,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ClientId", "Origin");
 
-                    b.ToTable("IdentityServerClientCorsOrigins");
+                    b.ToTable("IdentityServerClientCorsOrigins", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Clients.ClientGrantType", b =>
@@ -1500,7 +1650,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ClientId", "GrantType");
 
-                    b.ToTable("IdentityServerClientGrantTypes");
+                    b.ToTable("IdentityServerClientGrantTypes", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Clients.ClientIdPRestriction", b =>
@@ -1514,7 +1664,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ClientId", "Provider");
 
-                    b.ToTable("IdentityServerClientIdPRestrictions");
+                    b.ToTable("IdentityServerClientIdPRestrictions", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Clients.ClientPostLogoutRedirectUri", b =>
@@ -1528,7 +1678,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ClientId", "PostLogoutRedirectUri");
 
-                    b.ToTable("IdentityServerClientPostLogoutRedirectUris");
+                    b.ToTable("IdentityServerClientPostLogoutRedirectUris", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Clients.ClientProperty", b =>
@@ -1546,7 +1696,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ClientId", "Key", "Value");
 
-                    b.ToTable("IdentityServerClientProperties");
+                    b.ToTable("IdentityServerClientProperties", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Clients.ClientRedirectUri", b =>
@@ -1560,7 +1710,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ClientId", "RedirectUri");
 
-                    b.ToTable("IdentityServerClientRedirectUris");
+                    b.ToTable("IdentityServerClientRedirectUris", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Clients.ClientScope", b =>
@@ -1574,7 +1724,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ClientId", "Scope");
 
-                    b.ToTable("IdentityServerClientScopes");
+                    b.ToTable("IdentityServerClientScopes", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Clients.ClientSecret", b =>
@@ -1599,7 +1749,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("ClientId", "Type", "Value");
 
-                    b.ToTable("IdentityServerClientSecrets");
+                    b.ToTable("IdentityServerClientSecrets", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Devices.DeviceFlowCodes", b =>
@@ -1671,7 +1821,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("UserCode");
 
-                    b.ToTable("IdentityServerDeviceFlowCodes");
+                    b.ToTable("IdentityServerDeviceFlowCodes", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.Grants.PersistedGrant", b =>
@@ -1737,7 +1887,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("SubjectId", "SessionId", "Type");
 
-                    b.ToTable("IdentityServerPersistedGrants");
+                    b.ToTable("IdentityServerPersistedGrants", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.IdentityResources.IdentityResource", b =>
@@ -1813,7 +1963,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IdentityServerIdentityResources");
+                    b.ToTable("IdentityServerIdentityResources", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.IdentityResources.IdentityResourceClaim", b =>
@@ -1827,7 +1977,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("IdentityResourceId", "Type");
 
-                    b.ToTable("IdentityServerIdentityResourceClaims");
+                    b.ToTable("IdentityServerIdentityResourceClaims", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.IdentityServer.IdentityResources.IdentityResourceProperty", b =>
@@ -1845,7 +1995,60 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("IdentityResourceId", "Key", "Value");
 
-                    b.ToTable("IdentityServerIdentityResourceProperties");
+                    b.ToTable("IdentityServerIdentityResourceProperties", (string)null);
+                });
+
+            modelBuilder.Entity("Volo.Abp.PermissionManagement.PermissionDefinitionRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ExtraProperties")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("GroupName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<byte>("MultiTenancySide")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ParentName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Providers")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("StateCheckers")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupName");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("AbpPermissions", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.PermissionManagement.PermissionGrant", b =>
@@ -1875,9 +2078,39 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name", "ProviderName", "ProviderKey");
+                    b.HasIndex("TenantId", "Name", "ProviderName", "ProviderKey")
+                        .IsUnique()
+                        .HasFilter("[TenantId] IS NOT NULL");
 
-                    b.ToTable("AbpPermissionGrants");
+                    b.ToTable("AbpPermissionGrants", (string)null);
+                });
+
+            modelBuilder.Entity("Volo.Abp.PermissionManagement.PermissionGroupDefinitionRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ExtraProperties")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("AbpPermissionGroups", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.SettingManagement.Setting", b =>
@@ -1906,9 +2139,11 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name", "ProviderName", "ProviderKey");
+                    b.HasIndex("Name", "ProviderName", "ProviderKey")
+                        .IsUnique()
+                        .HasFilter("[ProviderName] IS NOT NULL AND [ProviderKey] IS NOT NULL");
 
-                    b.ToTable("AbpSettings");
+                    b.ToTable("AbpSettings", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.TenantManagement.Tenant", b =>
@@ -1939,6 +2174,9 @@ namespace OrganizationUnitSample.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletionTime");
 
+                    b.Property<int>("EntityVersion")
+                        .HasColumnType("int");
+
                     b.Property<string>("ExtraProperties")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
@@ -1966,7 +2204,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("AbpTenants");
+                    b.ToTable("AbpTenants", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.TenantManagement.TenantConnectionString", b =>
@@ -1985,7 +2223,7 @@ namespace OrganizationUnitSample.Migrations
 
                     b.HasKey("TenantId", "Name");
 
-                    b.ToTable("AbpTenantConnectionStrings");
+                    b.ToTable("AbpTenantConnectionStrings", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>

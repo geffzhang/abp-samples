@@ -8,6 +8,10 @@ const routes: Routes = [
     loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
   },
   {
+    path: 'account',
+    loadChildren: () => import('@abp/ng.account').then(m => m.AccountModule.forLazy()),
+  },
+  {
     path: 'identity',
     loadChildren: () => import('@abp/ng.identity').then(m => m.IdentityModule.forLazy()),
   },
@@ -25,7 +29,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
+  imports: [RouterModule.forRoot(routes, { })],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
